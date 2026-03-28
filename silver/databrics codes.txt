@@ -1,0 +1,47 @@
+this code we have to write in order to attach azure and databrics together 
+spark.conf.set(
+  "fs.azure.account.auth.type.salesprojectdatalake1.dfs.core.windows.net",
+  "OAuth"
+)
+
+spark.conf.set(
+  "fs.azure.account.oauth.provider.type.salesprojectdatalake1.dfs.core.windows.net",
+  "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider"
+)
+
+spark.conf.set(
+  "fs.azure.account.oauth2.client.id.salesprojectdatalake1.dfs.core.windows.net",
+  "00b3859f-222d-4fbb-9e72-e3fc0aab5483"
+)
+
+spark.conf.set(
+  "fs.azure.account.oauth2.client.secret.salesprojectdatalake1.dfs.core.windows.net",
+  service_credential
+)
+
+spark.conf.set(
+  "fs.azure.account.oauth2.client.endpoint.salesprojectdatalake1.dfs.core.windows.net",
+  "https://login.microsoftonline.com/071d5362-14b7-4f86-9d90-bd0ecbbb9a5f/oauth2/token"
+)
+
+
+
+
+
+<service-credential-key> with the name of the key containing the client secret.
+<storage-account> with the name of the Azure storage account.
+<application-id> with the Application (client) ID for the Microsoft Entra ID application.
+<directory-id> with the Directory (tenant) ID for the Microsoft Entra ID application.
+
+###READ Calendar DATA
+df = spark.read.format('csv').option("header",True).option("inferschema", True).load('abfss://bronze@salesprojectdatalake1.dfs.core.windows.net/AdventureWorks_Calendar')
+
+##display
+df.display()
+
+### save the transformed data directly to folder
+df_cal.write.format('parquet')\
+    .mode('append')\
+    .option("path","abfss://silver@salesprojectdatalake1.dfs.core.windows.net/AdventureWorks_Calendar")\
+        .saveAsTable()
+
